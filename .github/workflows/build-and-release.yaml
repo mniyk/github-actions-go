@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-latest  , target: linux/amd64     , exefile_name: "linux-amd64", extension: ""   }
-          - { os: macos-latest   , target: darwin/arm64    , exefile_name: "darwin-arm64", extension: ""   }
-          - { os: windows-latest , target: windows/amd64   , exefile_name: "windows-amd64", extension: .exe }
+          - { os: ubuntu-latest, target: linux/amd64, exefile_name: "linux-amd64", extension: ""}
+          - { os: macos-latest, target: darwin/arm64, exefile_name: "darwin-arm64", extension: ""}
+          - { os: windows-latest, target: windows/amd64, exefile_name: "windows-amd64", extension: .exe}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
