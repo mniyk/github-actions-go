@@ -40,7 +40,6 @@ jobs:
           GOOS=${TARGET%/*}  # OS部分を抽出
           GOARCH=${TARGET#*/}  # アーキテクチャ部分を抽出
           go build -o build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}
-          ls build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}
 
       - name: Rename artifacts
         shell: bash
@@ -53,4 +52,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.target }}${{ matrix.job.extension }}
+            build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.exefile_name }}${{ matrix.job.extension }}
