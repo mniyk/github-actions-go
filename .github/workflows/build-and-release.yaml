@@ -26,39 +26,38 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23'  # 必要なGoのバージョンを指定
+          go-version: '1.20'
 
       - name: Get Project Name
         shell: bash
         run: |
-          # プロジェクト名を現在のディレクトリ名から取得
           echo "PROJECT_NAME=$(basename $(pwd))" >> $GITHUB_ENV
           echo "Project name is set to: $PROJECT_NAME"
 
       - name: Build
         shell: bash
         run: |
-          # ビルドディレクトリの準備
           mkdir -p build/${{ matrix.job.target }}
-          # ターゲット情報を分離
           TARGET=${{ matrix.job.target }}
           GOOS=${TARGET%/*}  # '/'より前をGOOSに設定
           GOARCH=${TARGET#*/}  # '/'より後をGOARCHに設定
           echo "Building for GOOS=$GOOS, GOARCH=$GOARCH"
-          # ビルドを実行
           go build -o build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}
-          # ビルドされたファイルを確認
-          ls -l build/${{ matrix.job.target }}
+          echo "Build completed. Listing files:"
+          ls -l build/${{ matrix.job.target }}  # ビルド結果を確認
 
       - name: Rename artifacts
         shell: bash
         run: |
           # ビルド成果物の存在を確認してリネーム
-          if [ -f build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }} ]; then
-            mv build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }} \
-               build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-v${{ github.ref_name }}-${{ matrix.job.target }}${{ matrix.job.extension }}
+          ORIGINAL_FILE="build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}"
+          RENAMED_FILE="build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.target }}${{ matrix.job.extension }}"
+          echo "Checking for file: $ORIGINAL_FILE"
+          if [ -f "$ORIGINAL_FILE" ]; then
+            echo "File found. Renaming to: $RENAMED_FILE"
+            mv "$ORIGINAL_FILE" "$RENAMED_FILE"
           else
-            echo "Error: Build artifact not found!"
+            echo "Error: Build artifact not found at $ORIGINAL_FILE"
             exit 1
           fi
 
@@ -75,4 +74,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-v${{ github.ref_name }}-${{ matrix.job.target }}${{ matrix.job.extension }}
+            build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}-${{ github.ref_name }}-${{ matrix.job.target }}${{ matrix.job.extension }}
