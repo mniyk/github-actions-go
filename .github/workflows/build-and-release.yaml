@@ -39,9 +39,8 @@ jobs:
           TARGET=${{ matrix.job.target }}
           GOOS=${TARGET%/*}  # OS部分を抽出
           GOARCH=${TARGET#*/}  # アーキテクチャ部分を抽出
-          echo $GOOS
-          echo $GOARCH
           go build -o build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}
+          ls build/${{ matrix.job.target }}/${{ env.PROJECT_NAME }}${{ matrix.job.extension }}
 
       - name: Rename artifacts
         shell: bash
